@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 // Route for user Login
 
+// with the provided id string token will be created it can be any string
 const createToken = (id) => {
    return jwt.sign({id},process.env.JSON_SECRET);
 }
@@ -13,19 +14,19 @@ const loginUser = async (req,res) => {
         const exist = await userModel.findOne({email});
         // If User not exist
         if(!exist){
-            return res.json({success: false, message: "User doesn't exist"})
+            return res.json({success:false, message: "User doesn't exist"})
         }
         const isMatch = await bcrypt.compare(password,exist.password);
         const token = createToken(exist._id);
         if(isMatch){
-            return res.json({success: true, token})
+            return res.json({success:true, token})
         }
         else{
-            return res.json({success: false, message: "Incorrect password"})
+            return res.json({success:false, message: "Incorrect password"})
         }
     } catch (error) {
         console.log(error);
-        res.json({success: false, message: error.message})
+        res.json({success:false, message: error.message})
         
     }
 
@@ -41,15 +42,15 @@ const registerUser = async (req,res) => {
     // have to use await
 
     if(exits){
-        return res.json({success: false, message: "User already exists"})
+        return res.json({success:false, message:"User already exists"})
     }
     // Verify the mail is valid using validator
     if(!validator.isEmail(email)){
-        return res.json({success: false, message: "Enter valid email"})
+        return res.json({success:false, message:"Please enter valid email"})
     }
 
     if(password.length < 8){
-        return res.json({success: false, message: "Enter Strong password"})
+        return res.json({success:false, message:"Please enter Strong password"})
     }
 
     // Hashing user password
@@ -76,8 +77,22 @@ const registerUser = async (req,res) => {
 }
 
 // Route for admin login
-const adminLogin = (req,res) => {
+const adminLogin = async (req,res) => {
 
+    try{
+        const {email, password} = req.body;
+        if (email == process.env.ADMIN_EMAIL && password == process.env.ADMIN_PASSWORD) {
+            const token = jwt.sign(email + password, process.env.JSON_SECRET);
+            res.json({success: true, token})
+            
+        } else{
+            return res.json({success:false, message: "Incorrect password"})
+        }
+    }
+    catch (error) {
+        console.log(error);
+        res.json({success:false, message: error.message})
+     }
 }
 
 
