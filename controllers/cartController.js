@@ -78,4 +78,32 @@ const getUserCart = async (req,res) => {
     }
 }
 
-export {addToCart, updateCart, getUserCart}
+// Add this new controller function
+const removeFromCart = async (req, res) => {
+    try {
+        const { itemId, size } = req.body;
+        const userData = await userModel.findById(req.body.userId);
+        
+        let cartData = userData.cartData;
+        
+        // Check if item exists in cart
+        if (cartData[itemId]) {
+            // Remove the specific size entry
+            delete cartData[itemId][size];
+            
+            // If no sizes left for this item, remove the entire item entry
+            if (Object.keys(cartData[itemId]).length === 0) {
+                delete cartData[itemId];
+            }
+        }
+
+        await userModel.findByIdAndUpdate(req.body.userId, { cartData });
+        res.json({ success: true, message: "Item removed from cart" });
+    } catch (error) {
+        console.error(error.message);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// Don't forget to export the new function
+export { addToCart, updateCart, getUserCart, removeFromCart };

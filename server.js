@@ -6,6 +6,7 @@ import connectCloudinary from './config/cloudinary.js';
 import userRoute from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import cartRoutes from './routes/cartRoute.js';
+import orderRoutes from './routes/orderRoutes.js';
 // Express App configuration
 const app = express();
 const port = process.env.PORT || 4000;
@@ -21,6 +22,7 @@ connectCloudinary();
 app.use('/api/user',userRoute);
 app.use('/api/product',productRoutes);
 app.use('/api/cart', cartRoutes)
+app.use('/api/order',orderRoutes);
 
 app.get('/',(req,res) => {
     res.send("API is working")
