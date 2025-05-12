@@ -5,6 +5,7 @@ import connectDb from './config/connectDb.js';
 import connectCloudinary from './config/cloudinary.js';
 import userRoute from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
+import cartRoutes from './routes/cartRoute.js';
 // Express App configuration
 const app = express();
 const port = process.env.PORT || 4000;
@@ -19,7 +20,7 @@ connectCloudinary();
 // Api Endpoints
 app.use('/api/user',userRoute);
 app.use('/api/product',productRoutes);
- 
+app.use('/api/cart', cartRoutes)
 
 app.get('/',(req,res) => {
     res.send("API is working")
